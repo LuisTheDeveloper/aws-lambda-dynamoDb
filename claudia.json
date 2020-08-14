@@ -1,0 +1,11 @@
+{
+  "lambda": {
+    "role": "newsEngine-demo-executor",
+    "name": "newsEngine-demo",
+    "region": "us-east-2"
+  },
+  "api": {
+    "id": "q3mu3gpuo8",
+    "module": "index"
+  }
+}
