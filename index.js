@@ -1,5 +1,6 @@
 const express = require("express");
 const app = express();
+const router = express.Router();
 
 const ApiBuilder = require("claudia-api-builder");
 const AWS = require("aws-sdk");
@@ -8,26 +9,36 @@ const { v4: uuidv4 } = require("uuid");
 const api = new ApiBuilder();
 const dynamoDb = new AWS.DynamoDB.DocumentClient();
 
+const headlines = require("./fetchNews");
+const dbFunctions = require("./dbFunctions");
+
 //https://q3mu3gpuo8.execute-api.us-east-2.amazonaws.com/latest
 
 api.get("/", function () {
   return "News Search Engine development version 0.0.2";
 });
 
-//https://q3mu3gpuo8.execute-api.us-east-2.amazonaws.com/latest/news
+//https://q3mu3gpuo8.execute-api.us-east-2.amazonaws.com/latest/newsmz
 
-app.get("/headlines", (req, res) => {
-  headlines.getHeadlines().then((headlines) => {
-    res.json(headlines);
-  });
+api.get("/newsmz", () => {
+  return headlines.getHeadlines();
 });
 
-api.get("/news", function () {
+//https://q3mu3gpuo8.execute-api.us-east-2.amazonaws.com/latest/news
+api.get("/news", () => {
   return dynamoDb
     .scan({ TableName: "news" })
     .promise()
     .then((response) => response.Items);
 });
+
+api.post(
+  "/newsmz",
+  (request) => {
+    return dbFunctions.dbInsert(request);
+  },
+  { sucess: 201 }
+);
 
 api.post(
   "/news",
