@@ -15,7 +15,11 @@ const dbFunctions = require("./dbFunctions");
 //https://q3mu3gpuo8.execute-api.us-east-2.amazonaws.com/latest
 
 api.get("/", function () {
-  return "News Search Engine development version 0.0.2";
+  return {
+    AnnouncementDate: "16-August-2020",
+    API: "News Search Engine development version 0.0.2",
+    Announcement: "New updates to release very soon, stay tuned",
+  };
 });
 
 //https://q3mu3gpuo8.execute-api.us-east-2.amazonaws.com/latest/newsmz
