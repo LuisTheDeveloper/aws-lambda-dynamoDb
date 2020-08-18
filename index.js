@@ -4,6 +4,10 @@ const router = express.Router();
 
 const ApiBuilder = require("claudia-api-builder");
 const AWS = require("aws-sdk");
+
+// const config = require("./aws-db/config"); // only for local testing
+// AWS.config.update(config.aws_remote_config); // only for local testing
+
 const { v4: uuidv4 } = require("uuid");
 
 const api = new ApiBuilder();
@@ -11,9 +15,11 @@ const dynamoDb = new AWS.DynamoDB.DocumentClient();
 
 const headlines = require("./fetchNews");
 const dbFunctions = require("./dbFunctions");
+const createHeadlines = require("./handlers/createHeadlines");
+const dbInsert = require("./aws-db/dynamodb");
 
+// Home page - announcements page
 //https://q3mu3gpuo8.execute-api.us-east-2.amazonaws.com/latest
-
 api.get("/", function () {
   return {
     AnnouncementDate: "16-August-2020",
@@ -22,46 +28,36 @@ api.get("/", function () {
   };
 });
 
+// Fetch all the news instantly from the origin and return a json object
 //https://q3mu3gpuo8.execute-api.us-east-2.amazonaws.com/latest/newsmz
-
 api.get("/newsmz", () => {
   return headlines.getHeadlines();
 });
 
-//https://q3mu3gpuo8.execute-api.us-east-2.amazonaws.com/latest/news
-api.get("/news", () => {
-  return dynamoDb
-    .scan({ TableName: "news" })
-    .promise()
-    .then((response) => response.Items);
-});
+// //https://q3mu3gpuo8.execute-api.us-east-2.amazonaws.com/latest/news
+// api.get("/news", () => {
+//   return dynamoDb
+//     .scan({ TableName: "news" })
+//     .promise()
+//     .then((response) => response.Items);
+// });
 
-api.post(
-  "/newsmz",
-  (request) => {
-    return dbFunctions.dbInsert(request);
+api.get(
+  "/newsmz/db",
+  async () => {
+    //const apiHeadLines = await headlines.getHeadlines();
+    return dbInsert();
   },
-  { sucess: 201 }
+  {
+    success: 201,
+    error: 400,
+  }
 );
 
-api.post(
-  "/news",
-  function (request) {
-    const params = {
-      TableName: "news",
-      Item: {
-        id: uuidv4(),
-        createdAt: Date.now(),
-        updatedAt: Date.now(),
-        title: request.body.title,
-        lead: request.body.lead,
-        url: request.body.url,
-      },
-    };
-    return dynamoDb.put(params).promise();
-  },
-  { sucess: 201 }
-);
+// app.get("/sample", async (req, res) => {
+//   //const json = await headlines.getHeadlines();
+//   return dbInsert();
+// });
 
 api.get("/news/{id}", function (request) {
   const id = decodeURI(request.pathParams.id);
@@ -123,4 +119,9 @@ api.delete(
   { sucess: { contentType: "text/plain" } }
 );
 
+//module.exports = { app, api };
 module.exports = api;
+
+// app.listen(3010, () => {
+//   console.log("Server listening at http://localhost:3010");
+// });

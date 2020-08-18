@@ -18,6 +18,7 @@
     "claudia-api-builder": "^4.1.2",
     "express": "^4.17.1",
     "express-validator": "^6.5.0",
+    "moment": "^2.27.0",
     "node-fetch": "^2.6.0",
     "nodemon": "^2.0.4",
     "request": "^2.88.2",
