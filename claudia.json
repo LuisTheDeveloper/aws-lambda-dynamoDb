@@ -1,11 +1,11 @@
 {
   "lambda": {
-    "role": "newsEngine-demo-executor",
-    "name": "newsEngine-demo",
+    "role": "newsengine-executor",
+    "name": "newsengine",
     "region": "us-east-2"
   },
   "api": {
-    "id": "q3mu3gpuo8",
-    "module": "index"
+    "id": "bdgd4iqs3i",
+    "module": "api"
   }
 }

@@ -1,6 +1,7 @@
 const fetch = require("node-fetch");
 const cheerio = require("cheerio");
 const { response } = require("express");
+const { putNewsIntoDb } = require("./handlers/fetchNews");
 
 const searchUrl =
   "https://www.dw.com/pt-002/not%C3%ADcias/mo%C3%A7ambique/s-30380";
@@ -38,7 +39,7 @@ function getHeadlines() {
             url: $url.attr("href"),
           };
 
-          headlines.push(news);
+          putNewsIntoDb(news);
         }
 
         if ($element.find(".group").length) {
@@ -58,7 +59,8 @@ function getHeadlines() {
             url: $url.attr("href"),
           };
 
-          headlines.push(news);
+          //headlines.push(news);
+          putNewsIntoDb(news);
 
           if ($element.find(".linkList.intern").length) {
             $url = $element.find(".linkList.intern").children("a");
@@ -79,7 +81,7 @@ function getHeadlines() {
               url: $url.attr("href"),
             };
 
-            headlines.push(news);
+            putNewsIntoDb(news);
           }
 
           if ($element.find(".linkList.overlayIcon").length) {
@@ -94,16 +96,13 @@ function getHeadlines() {
               url: $url.attr("href"),
             };
 
-            headlines.push(news);
+            putNewsIntoDb(news);
           }
         }
       });
-      console.log(headlines);
 
       return headlines;
     });
 }
 
-module.exports = {
-  getHeadlines,
-};
+module.exports = getHeadlines;
