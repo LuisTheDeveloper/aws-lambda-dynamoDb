@@ -4,11 +4,11 @@ const docClient = new AWS.DynamoDB.DocumentClient();
 const { v4: uuidv4 } = require("uuid");
 const _ = require("moment");
 
-const urlExists = async (newsUrl) => {
+const insertNews = async (urlNews, data) => {
   var params = {
     TableName: "news",
     FilterExpression: "urlNews = :news_url",
-    ExpressionAttributeValues: { ":news_url": newsUrl },
+    ExpressionAttributeValues: { ":news_url": urlNews },
   };
 
   const result = await docClient
@@ -22,11 +22,7 @@ const urlExists = async (newsUrl) => {
       throw saveError;
     });
 
-  if (result.Count > 0) {
-    return result;
-  } else {
-    return false;
-  }
+  if (result.Count === 0) putNewsIntoDb(data);
 };
 
 const putNewsIntoDb = (data) => {
@@ -54,4 +50,4 @@ const putNewsIntoDb = (data) => {
     });
 };
 
-module.exports = { urlExists, putNewsIntoDb };
+module.exports = { insertNews, putNewsIntoDb };

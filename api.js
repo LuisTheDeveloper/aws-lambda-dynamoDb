@@ -1,4 +1,7 @@
 "use strict";
+const express = require("express");
+const app = express();
+
 const Api = require("claudia-api-builder");
 const api = new Api();
 
@@ -25,6 +28,9 @@ api.get("/putnews", () => {
   return getHeadlines();
 });
 
+// app.get("/putnews", () => {
+//   return getHeadlines();
+// });
 api.post(
   "/news",
   (request) => {
